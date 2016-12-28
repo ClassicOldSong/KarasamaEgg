@@ -1,0 +1,17 @@
+html, body {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	background-color: #4f5178;
+}
+
+.egg {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+}

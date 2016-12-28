@@ -19,7 +19,9 @@ module.exports = {
 	format: 'iife',
 	sourceMap: 'inline',
 	plugins: [
-		progress(),
+		progress({
+			clearLine: false
+		}),
 		resolve({
 			jsnext: true,
 			main: true,
@@ -31,7 +33,9 @@ module.exports = {
 		}),
 		postcss(),
 		image(),
-		eslint(),
+		eslint({
+			exclude: ['**/*.html', '**/*.svg', '**/*.css']
+		}),
 		babel({
 			exclude: 'node_modules/**',
 			runtimeHelpers: true
