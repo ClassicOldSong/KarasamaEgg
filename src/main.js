@@ -2,8 +2,6 @@
 'use strict'
 
 import { info } from './debug.js'
-import Blyde from 'blyde'
-const $ = Blyde
 
 import content from './main.html'
 import ew from './res/egg-w.svg'
@@ -16,35 +14,37 @@ const props = {
 	tg: 0
 }
 
+const $ = selector => document.querySelector(selector)
+
 /* Base64 conversion
 ** from http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
 ** modified for actual usage
 */
-const b64toBlobUrl = (b64Str, sliceSize = 512) => {
-	const [type, b64Data] = b64Str.split(','),
-		contentType = type.split(':')[1].split(';')[0],
-		byteCharacters = atob(b64Data),
-		byteArrays = []
+// const b64toBlobUrl = (b64Str, sliceSize = 512) => {
+// 	const [type, b64Data] = b64Str.split(','),
+// 		contentType = type.split(':')[1].split(';')[0],
+// 		byteCharacters = atob(b64Data),
+// 		byteArrays = []
 
-	for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-		const slice = byteCharacters.slice(offset, offset + sliceSize)
+// 	for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+// 		const slice = byteCharacters.slice(offset, offset + sliceSize)
 
-		const byteNumbers = new Array(slice.length)
-		for (let i = 0; i < slice.length; i++) {
-			byteNumbers[i] = slice.charCodeAt(i)
-		}
+// 		const byteNumbers = new Array(slice.length)
+// 		for (let i = 0; i < slice.length; i++) {
+// 			byteNumbers[i] = slice.charCodeAt(i)
+// 		}
 
-		const byteArray = new Uint8Array(byteNumbers)
-		byteArrays.push(byteArray)
-	}
+// 		const byteArray = new Uint8Array(byteNumbers)
+// 		byteArrays.push(byteArray)
+// 	}
 
-	const blob = new Blob(byteArrays, {type: contentType})
-	return URL.createObjectURL(blob)
-}
+// 	const blob = new Blob(byteArrays, {type: contentType})
+// 	return URL.createObjectURL(blob)
+// }
 
 // Get images from base64 data
-const eggw = b64toBlobUrl(ew.src),
-	eggy = b64toBlobUrl(ey.src)
+// const eggw = b64toBlobUrl(ew.src),
+// 	eggy = b64toBlobUrl(ey.src)
 
 // Handle user properties
 window.wallpaperPropertyListener = {
@@ -57,16 +57,39 @@ window.wallpaperPropertyListener = {
 	}
 }
 
-$(() => {
-	// Prepare the frying pan
-	const pan = $.q('body')
-	pan.$el.insertAdjacentHTML('afterbegin', content)
+const init = () => {
+	// Remove the init listener
+	document.removeEventListener('DOMContentLoaded', init, false)
 
-	// Put in the egg!
-	const w = pan.q('.egg.w'),
-		y = pan.q('.egg.y')
-	w.$el.style.backgroundImage = `url("${eggw}")`
-	y.$el.style.backgroundImage = `url("${eggy}")`
+	// Prepare the frying pan
+	// const pan = $.q('body')
+	// pan.$el.insertAdjacentHTML('afterbegin', content)
+	$('body').insertAdjacentHTML('afterbegin', content)
+	const pr = window.devicePixelRatio || 1,
+		c = $('.egg'),
+		wW = window.innerWidth,
+		wH = window.innerHeight
+	let bL = 0,
+		bT = 0,
+		bS = 1
+	c.width = wW * pr
+	c.height = wH * pr
+	if (wW / wH > ew.width / ew.height) {
+		bS = wH / ew.height
+		bL = (wW - bS * ew.width) / 2
+	} else {
+		bS = wW / ew.width
+		bT = (wH - bS * ew.height) / 2
+	}
+
+	const iW = ew.width * bS,
+		iH = ew.height * bS
+
+	const pan = c.getContext('2d')
+	pan.scale(pr, pr)
+
+	pan.drawImage(ew, bL, bT, iW, iH)
+	pan.drawImage(ey, bL, bT, iW, iH)
 
 	// Set the stop point
 	const sp = 0.2
@@ -87,8 +110,17 @@ $(() => {
 
 	// Apply changes to view
 	const update = () => {
-		w.$el.style.transform = `translate3D(${wX}px, ${wY}px, 0) scale(${wS})`
-		y.$el.style.transform = `translate3D(${yX}px, ${yY}px, 0) scale(${yS})`
+		const wdW = iW * wS,
+			wdH = iH * wS,
+			ydW = iW * yS,
+			ydH = iH * yS,
+			wpL = (wdW - iW) / 2,
+			wpT = (wdH - iH) / 2,
+			ypL = (ydW - iW) / 2,
+			ypT = (ydH - iH) / 2
+		pan.clearRect(0, 0, c.width, c.height)
+		pan.drawImage(ew, bL + wX - wpL, bT + wY - wpT, wdW, wdH)
+		pan.drawImage(ey, bL + yX - ypL, bT + yY - ypT, ydW, ydH)
 	}
 
 	// Pause animation to save CPU when not active
@@ -145,7 +177,7 @@ $(() => {
 	}
 
 	// Listen mouse move events
-	$.on('mousemove', (e) => {
+	window.addEventListener('mousemove', (e) => {
 		diffX += e.clientX - mouseX
 		diffY += e.clientY - mouseY
 		mouseX = e.clientX
@@ -174,4 +206,6 @@ $(() => {
 	window.wallpaperRegisterAudioListener(audioListener)
 
 	info(`${APPNAME} v${VERSION} started!`)
-})
+}
+
+document.addEventListener('DOMContentLoaded', init, false)
