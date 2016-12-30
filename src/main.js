@@ -51,7 +51,7 @@ window.wallpaperPropertyListener = {
 	applyGeneralProperties(up) {
 		if (up.fps) {
 			props.fps = up.fps
-			props.tg = 1 / up.fps
+			props.tg = 1000 / up.fps
 			info('FPS limitation updated, current FPS limitation is', props.fps, 'timegap is', props.tg)
 		}
 	}
@@ -107,7 +107,7 @@ $(() => {
 	const tick = () => {
 		const moveX = diffX / 30,
 			moveY = diffY / 30,
-			now = performance.now() / 1000,
+			now = performance.now(),
 			dt = now - last
 		last = now
 		diffX -= moveX
@@ -124,6 +124,7 @@ $(() => {
 		// Limit FPS
 		if (props.fps > 0) {
 			fpsThreshold += dt
+			if (fpsThreshold > props.tg) fpsThreshold = props.tg
 			if (fpsThreshold < props.tg) return
 			fpsThreshold -= props.tg
 		}
@@ -140,7 +141,7 @@ $(() => {
 
 		// Start animation
 		if (last !== 0) return
-		last = performance.now() / 1000
+		last = performance.now()
 		window.requestAnimationFrame(tick)
 		info('Animation started.')
 	})
