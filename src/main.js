@@ -81,12 +81,14 @@ $(() => {
 		wX = 0,
 		wY = 0,
 		yX = 0,
-		yY = 0
+		yY = 0,
+		wS = 1,
+		yS = 1
 
 	// Apply changes to view
 	const update = () => {
-		w.$el.style.transform = `translate3D(${wX}px, ${wY}px, 0)`
-		y.$el.style.transform = `translate3D(${yX}px, ${yY}px, 0)`
+		w.$el.style.transform = `translate3D(${wX}px, ${wY}px, 0) scale(${wS})`
+		y.$el.style.transform = `translate3D(${yX}px, ${yY}px, 0) scale(${yS})`
 	}
 
 	// Pause animation to save CPU when not active
@@ -99,6 +101,8 @@ $(() => {
 		wY = 0
 		yX = 0
 		yY = 0
+		wS = 1
+		yS = 1
 		update()
 		info('Animation paused.')
 	}
@@ -118,7 +122,7 @@ $(() => {
 		yY += (moveY - yY / 30) / 1.5 + (wY - yY) / 30
 
 		// Start Next tick
-		if (Math.abs(wX) + Math.abs(wY) + Math.abs(yX) + Math.abs(yY) < sp) return pause()
+		if (Math.abs(wX) + Math.abs(wY) + Math.abs(yX) + Math.abs(yY) < sp && wS + yS === 2) return pause()
 		window.requestAnimationFrame(tick)
 
 		// Limit FPS
@@ -132,6 +136,14 @@ $(() => {
 		update()
 	}
 
+	// Handle if start the animation
+	const start = () => {
+		if (last !== 0) return
+		last = performance.now()
+		window.requestAnimationFrame(tick)
+		info('Animation started.')
+	}
+
 	// Listen mouse move events
 	$.on('mousemove', (e) => {
 		diffX += e.clientX - mouseX
@@ -140,11 +152,26 @@ $(() => {
 		mouseY = e.clientY
 
 		// Start animation
-		if (last !== 0) return
-		last = performance.now()
-		window.requestAnimationFrame(tick)
-		info('Animation started.')
+		start()
 	})
+
+	// Handle audio info updates
+	const audioListener = (audioArray) => {
+		const gap = audioArray.length / 4
+		let lf = 0,
+			hf = 0
+		for (let i = 0; i < gap; i++) {
+			lf += audioArray[i] + audioArray[i + gap * 2]
+			hf += audioArray[i + gap] + audioArray[i + gap * 3]
+		}
+		wS = 1 + (lf / gap) / 2
+		yS = 1 + (hf / gap) / 2
+		// Start animation
+		start()
+	}
+
+	// Listen audio updates
+	window.wallpaperRegisterAudioListener(audioListener)
 
 	info(`${APPNAME} v${VERSION} started!`)
 })
