@@ -426,7 +426,7 @@ var init = function init() {
 
 	window.wallpaperRegisterAudioListener(audioListener);
 
-	info("K-Egg" + ' v' + "0.1.3.master.77ad937" + ' started!');
+	info("K-Egg" + ' v' + "0.1.3.master.c606088" + ' started!');
 };
 
 document.addEventListener('DOMContentLoaded', init, false);
