@@ -16,36 +16,6 @@ const props = {
 
 const $ = selector => document.querySelector(selector)
 
-/* Base64 conversion
-** from http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
-** modified for actual usage
-*/
-// const b64toBlobUrl = (b64Str, sliceSize = 512) => {
-// 	const [type, b64Data] = b64Str.split(','),
-// 		contentType = type.split(':')[1].split(';')[0],
-// 		byteCharacters = atob(b64Data),
-// 		byteArrays = []
-
-// 	for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-// 		const slice = byteCharacters.slice(offset, offset + sliceSize)
-
-// 		const byteNumbers = new Array(slice.length)
-// 		for (let i = 0; i < slice.length; i++) {
-// 			byteNumbers[i] = slice.charCodeAt(i)
-// 		}
-
-// 		const byteArray = new Uint8Array(byteNumbers)
-// 		byteArrays.push(byteArray)
-// 	}
-
-// 	const blob = new Blob(byteArrays, {type: contentType})
-// 	return URL.createObjectURL(blob)
-// }
-
-// Get images from base64 data
-// const eggw = b64toBlobUrl(ew.src),
-// 	eggy = b64toBlobUrl(ey.src)
-
 // Handle user properties
 window.wallpaperPropertyListener = {
 	applyGeneralProperties(up) {
@@ -62,8 +32,6 @@ const init = () => {
 	document.removeEventListener('DOMContentLoaded', init, false)
 
 	// Prepare the frying pan
-	// const pan = $.q('body')
-	// pan.$el.insertAdjacentHTML('afterbegin', content)
 	$('body').insertAdjacentHTML('afterbegin', content)
 	const pr = window.devicePixelRatio || 1,
 		c = $('.egg'),
