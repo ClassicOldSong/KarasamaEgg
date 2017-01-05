@@ -12,9 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/ClassicOldSong/KarasamaEgg.git"
   },
-  "keywords": [
-    "Bilisound"
-  ],
+  "keywords": [],
   "author": "ClassicOldSong",
   "license": "MIT",
   "bugs": {

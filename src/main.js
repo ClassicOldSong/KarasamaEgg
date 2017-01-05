@@ -128,9 +128,8 @@ const init = () => {
 		// Limit FPS
 		if (props.fps > 0) {
 			fpsThreshold += dt
-			if (fpsThreshold > props.tg) fpsThreshold = props.tg
-			if (fpsThreshold < props.tg) return
-			fpsThreshold -= props.tg
+			if (fpsThreshold > props.tg) fpsThreshold = 0
+			else return
 		}
 
 		update()
