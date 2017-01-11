@@ -3,6 +3,10 @@ html, body {
 	width: 100%;
 	overflow: hidden;
 	background-color: #4f5178;
+	background-position: center;
+	background-size: cover;
+	pading: 0;
+	margin: 0;
 }
 
 .egg {

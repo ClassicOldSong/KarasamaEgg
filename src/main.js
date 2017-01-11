@@ -2,7 +2,6 @@
 'use strict'
 
 import { info } from './debug.js'
-
 import content from './main.html'
 import ew from './res/egg-w.svg'
 import ey from './res/egg-y.svg'
@@ -11,28 +10,21 @@ import './style/style.css'
 // Set default properties
 const props = {
 	fps: 0,
-	tg: 0
+	tg: 0,
+	color: 'rgb(79, 81, 120)',
+	img: ''
 }
 
 const $ = selector => document.querySelector(selector)
-
-// Handle user properties
-window.wallpaperPropertyListener = {
-	applyGeneralProperties(up) {
-		if (up.fps) {
-			props.fps = up.fps
-			props.tg = 1000 / up.fps
-			info('FPS limitation updated, current FPS limitation is', props.fps, 'timegap is', props.tg)
-		}
-	}
-}
 
 const init = () => {
 	// Remove the init listener
 	document.removeEventListener('DOMContentLoaded', init, false)
 
 	// Prepare the frying pan
-	$('body').insertAdjacentHTML('afterbegin', content)
+	const body = $('body')
+
+	body.insertAdjacentHTML('afterbegin', content)
 	const pr = window.devicePixelRatio || 1,
 		c = $('.egg'),
 		wW = window.innerWidth,
@@ -165,8 +157,39 @@ const init = () => {
 		}
 		wS = 1 + (lf / gap) / 2
 		yS = 1 + (hf / gap) / 2
+
 		// Start animation
 		start()
+	}
+
+	// Update background
+	const updateBg = () => {
+		body.style.backgroundColor = `rgb(${props.color})`
+		if (props.img) body.style.backgroundImage = `url(file:///${props.img})`
+	}
+	updateBg()
+
+	// Handle user properties
+	window.wallpaperPropertyListener = {
+		applyGeneralProperties(gp) {
+			if (gp.fps) {
+				props.fps = gp.fps
+				props.tg = 1000 / gp.fps
+				info('FPS limitation updated, current FPS limitation is', props.fps, 'timegap is', props.tg)
+			}
+		},
+		applyUserProperties(up) {
+			if (up.schemecolor) {
+				const colors = up.schemecolor.value.split(' ').map(val => Math.ceil(val * 255))
+				props.color = colors.join(', ')
+				info('Schemecolor updated, current value is', props.color)
+			}
+			if (up.image) {
+				props.img = up.image.value
+				info('Background image updated, current value is', props.img)
+			}
+			updateBg()
+		}
 	}
 
 	// Listen audio updates

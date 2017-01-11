@@ -1,6 +1,6 @@
 {
   "name": "K-Egg",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "KarasamaEgg dynamic wallpaper for WallpaperEngine",
   "main": "dist/main.min.js",
   "scripts": {
