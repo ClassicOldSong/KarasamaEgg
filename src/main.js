@@ -7,6 +7,8 @@ import ew from './res/egg-w.svg'
 import ey from './res/egg-y.svg'
 import './style/style.css'
 
+window.ey = ey
+
 // Set default properties
 const props = {
 	fps: 0,
@@ -193,9 +195,9 @@ const init = () => {
 	}
 
 	// Listen audio updates
-	window.wallpaperRegisterAudioListener(audioListener)
+	if (window.wallpaperRegisterAudioListener) window.wallpaperRegisterAudioListener(audioListener)
 
 	info(`${APPNAME} v${VERSION} started!`)
 }
 
-document.addEventListener('DOMContentLoaded', init, false)
+window.addEventListener('load', init, false)
