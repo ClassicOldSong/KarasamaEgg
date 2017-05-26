@@ -454,7 +454,7 @@ var init = function init() {
 
 	if (window.wallpaperRegisterAudioListener) window.wallpaperRegisterAudioListener(audioListener);
 
-	info("K-Egg" + ' v' + "0.1.5.master.37ef16b" + ' started!');
+	info("K-Egg" + ' v' + "0.1.5.master.5512821" + ' started!');
 };
 
 window.addEventListener('load', init, false);
